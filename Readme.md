@@ -3,8 +3,10 @@ Program to check if a person is in the image or not
 
 Before running the programs in the order mentioned below export your Ocp-Apim-Subscription-Key you got from Microsoft as an environment variable
 
-```export SUBSCRIPTION_KEY=Your_Ocp-Apim-Subscription-Key . ``` 
-```export AZURE_REGION=Your_Region```
+```
+export SUBSCRIPTION_KEY=Your-Ocp-Apim-Subscription-Key
+export AZURE_REGION=Your_Region
+```
 
 ### Create Person Group
 Run the createPersonGroup program to create a new group for the people you want the chaqer to check on
@@ -18,27 +20,33 @@ Pass :-
 ### Create Person
 Run the createPerson program to create a person in the group you created above
 Pass :-
--
+- ID of the group you want to create the person in as first argument 
+- Person name as the second argument
+- Person Info as the third argument
+
+``` python createPerson.py group_id person_name person_info ```
 
 ### Add Faces to a person
-Run the program addFace to add faces to the person you created above
-Input the following fields in the script before executing :-
-- GroupId of the person you want to add the face to
-- PersonId of the person you created above and exported as an environment variable
-- Path to your folder containing the images of the person (NOTE: This folder should only contain images of the person)
-- Or Path to the image you want to add
-- Enter the appropriate region for your Azure account
+Run the program addFace to add faces to a person 
+Pass :- 
+- ID of the group the person belongs to as the first argument
+- Name of the person you want to add faces to as the second argument
+- URL of image of the person or local path of an image or path of a directory containing images of the person as the third argument
+
+``` python addFace.py group_id person_name the_image```
+
 
 ### Train your group
-Once you have added faces to the persons in your group, run the trainGroup program to train the model for the faces provided
-Input the following fields in the script before executing :-
-- GroupId of the group you want to trainGroup
-- Enter the appropriate region for your Azure account
+Run the program to train a group on the faces you have provided
+Pass :-
+- The ID of the group you want train
+
+``` python trainGroup.py group_id```
 
 ### Identify faces
-Once you have run all the above programs, the model is ready to identify people in an image you provide
-This program has two functions identifyFaces() and detectFaces(). The program uses the function detectFaces() to return an array of faceIds found in the image provided to the identifyFaces function. The identifyFaces() function returns if the person is present in the image or not.
-Input the following fields in the script before executing :-
-- The path or the URL of the image to check for persons
-- The confidence with which you want your match to be returned
-- Enter the appropriate region for your Azure account
+Run the program to identify faces in an image you provide
+Pass :-
+- The ID of the group you want to check on as the first argument
+- URL of image of the person or local path of an image as
+
+``` python identifyFaces.py group_id the_image```
