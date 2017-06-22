@@ -3,8 +3,8 @@ Program to check if a person is in the image or not
 
 Before running the programs in the order mentioned below export your Ocp-Apim-Subscription-Key you got from Microsoft as an environment variable
 
-```export SUBSCRIPTION_KEY=Your_Ocp-Apim-Subscription-Key
-export AZURE_REGION=Your_Region```
+```export SUBSCRIPTION_KEY=Your_Ocp-Apim-Subscription-Key``` 
+```export AZURE_REGION=Your_Region```
 
 ### Create Person Group
 Run the createPersonGroup program to create a new group for the people you want the chaqer to check on
@@ -13,7 +13,7 @@ Pass :-
 - Group Name as the second argument (Optional)
 - Group Info as the third argument (Optional)
 
-```python createPersonGroup.py your_group_id your_group_name your_group_inf0```
+```python createPersonGroup.py your_group_id your_group_name your_group_info```
 
 ### Create Person
 Run the createPerson program to create a person in the group you created above
