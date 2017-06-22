@@ -3,7 +3,7 @@ Program to check if a person is in the image or not
 
 Before running the programs in the order mentioned below export your Ocp-Apim-Subscription-Key you got from Microsoft as an environment variable
 
-```export SUBSCRIPTION_KEY=Your_Ocp-Apim-Subscription-Key``` 
+```export SUBSCRIPTION_KEY=Your_Ocp-Apim-Subscription-Key <br \>``` 
 ```export AZURE_REGION=Your_Region```
 
 ### Create Person Group
