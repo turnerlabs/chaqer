@@ -23,8 +23,7 @@ except:
     except Exception as e:
         if 'Is a directory' in e:
             flag = 1
-        else:
-            continue
+
 if flag == -1:
     chaqerObject.identifyFaces(groupID,img)
 else :

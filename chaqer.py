@@ -232,7 +232,7 @@ class chaqer:
                         data = ast.literal_eval(data)
 
                         if 'error' in data.keys():
-                            print '\n\n\n' + filePath + ' is an Invalid image'
+                            print '\n\n\nCould not find face in ' + filePath
                         else:
                             count = count + 1
 
@@ -322,6 +322,7 @@ class chaqer:
         outStr = ' '
         jsonName = []
         result = {}
+        responseFileName = '/tmp/' + 'imagesSearchedOn' + groupID.upper() + '.txt'
         global headers
         global CONN_CODE
         global KEY
@@ -334,7 +335,12 @@ class chaqer:
             return
         elif len(faceID) == 0:
             print '\n\n\nNo Faces found in ' + image
-
+            if os.stat('%s'%responseFileName).st_size != 0:
+                with open('%s'%responseFileName,'r') as f:
+                    result = eval(f.read())
+            result[image] = jsonName
+            with open('%s'%responseFileName,'w') as f:
+                json.dump(result,f)
             return
         else:
             faceID = str(faceID)
@@ -368,6 +374,12 @@ class chaqer:
             outStr = outStr[:-2]
             if outStr == '':
                 print '\n\n\nCouldn\'t identify anyone'
+                if os.stat('%s'%responseFileName).st_size != 0:
+                    with open('%s'%responseFileName,'r') as f:
+                        result = eval(f.read())
+                result[image] = jsonName
+                with open('%s'%responseFileName,'w') as f:
+                    json.dump(result,f)
                 return
 
             print '\n\n\nSuccesfully identified ' + outStr + ' in the image ' + str(image)
