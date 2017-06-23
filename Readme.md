@@ -15,7 +15,9 @@ Pass :-
 - Group Name as the second argument (Optional)
 - Group Info as the third argument (Optional)
 
-```python createPersonGroup.py your_group_id your_group_name your_group_info```
+```
+python createPersonGroup.py your_group_id your_group_name your_group_info
+```
 
 ### Create Person
 Run the createPerson program to create a person in the group you created above
@@ -24,7 +26,9 @@ Pass :-
 - Person name as the second argument
 - Person Info as the third argument
 
-``` python createPerson.py group_id person_name person_info ```
+```
+python createPerson.py group_id person_name person_info
+```
 
 ### Add Faces to a person
 Run the program addFace to add faces to a person
@@ -33,7 +37,9 @@ Pass :-
 - Name of the person you want to add faces to as the second argument
 - URL of image of the person or local path of an image or path of a directory containing images of the person as the third argument
 
-``` python addFace.py group_id person_name the_image```
+```
+python addFace.py group_id person_name the_image
+```
 
 
 ### Train your group
@@ -41,7 +47,9 @@ Run the program trainGroup to train a group on the faces you have provided
 Pass :-
 - The ID of the group you want train
 
-``` python trainGroup.py group_id```
+```
+python trainGroup.py group_id
+```
 
 ### Identify faces
 Run the program identifyFaces to identify faces in an image you provide
@@ -49,21 +57,38 @@ Pass :-
 - The ID of the group you want to check on as the first argument
 - URL of image of the person or local path of an image as
 
-``` python identifyFaces.py group_id the_image```
+```
+python identifyFaces.py group_id the_image
+```
 
 ### List Person Groups
 Run the program listGroups to list already existing Groups
 
-```python listGroups.py ```
+```
+python listGroups.py
+```
 
 ### Delete Person Group
 Run the program deleteGroup to delete a group
 Pass :-
 - The ID of the group you want to delete as an argument
 
-``` python deleteGroup.py group_id ```
+```
+python deleteGroup.py group_id
+```
+
+### List Search history on a group
+Run the program listSearchHistory
+Pass :-
+- The ID of the group you want the search history on as an argument
+
+```
+python listSearchHistory group_id
+```
 
 ### Run the chaqer app
 Run the chaqer app for interactive chaqing
 
-``` python runchaqer.py ```
+```
+python runchaqer.py
+```
