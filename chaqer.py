@@ -357,7 +357,6 @@ class Chaqer:
                 return
 
             print '\n\n\nSuccesfully identified ' + outStr + ' in the image ' + str(image)
-            responseFileName = '/tmp/' + 'imagesSearchedOn' + groupID.upper() + '.txt'
             if os.stat('%s'%responseFileName).st_size != 0:
                 with open('%s'%responseFileName,'r') as f:
                     result = eval(f.read())
