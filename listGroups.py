@@ -1,5 +1,5 @@
 import sys
 import chaqer
-from chaqer import chaqer
-chaqerObject = chaqer()
+from chaqer import Chaqer
+chaqerObject = Chaqer()
 chaqerObject.listGroups()

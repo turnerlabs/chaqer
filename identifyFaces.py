@@ -1,16 +1,18 @@
 import sys
 import os
 import chaqer
-from chaqer import chaqer
-chaqerObject = chaqer()
+from chaqer import Chaqer
+chaqerObject = Chaqer()
 try:
     groupID = sys.argv[1]
 except:
     print 'Please enter the ID of the group you want to search on as argument'
+    sys.exit()
 try:
     img = sys.argv[2]
 except:
     print 'Please enter image as an argument'
+    sys.exit()
 flag = -1
 
 try:

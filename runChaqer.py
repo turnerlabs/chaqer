@@ -1,8 +1,8 @@
 import os
 import sys
 import chaqer
-from chaqer import chaqer
-chaqerObject = chaqer()
+from chaqer import Chaqer
+chaqerObject = Chaqer()
 while True:
     ch = raw_input("\n\n\n1.To create a Person Group enter 1\n2.To create a Person enter 2\n3.To add faces to a person enter 3\n4.To train a group enter 4\n5.To identify people in an image enter 5\n6.To list already existing groups enter 6\n7.To delete a group enter 7\n8.To list search history\n9.To exit enter 'Exit'\n\n\n")
     ch = str(ch)

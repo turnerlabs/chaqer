@@ -4,28 +4,26 @@ import sys
 import json
 import ast
 
-KEY = str(os.environ.get('SUBSCRIPTION_KEY'))
-REGION = str(os.environ.get('AZURE_REGION'))
-CONN_CODE = REGION + '.api.cognitive.microsoft.com'
-NameID = {}
+class Chaqer:
 
-headers = {
-    'Content-Type': 'application/json',
-    'Ocp-Apim-Subscription-Key': KEY,
-}
+    def __init__(self):
+        self.KEY = str(os.environ.get('SUBSCRIPTION_KEY'))
+        self.REGION = str(os.environ.get('AZURE_REGION'))
+        self.CONN_CODE = self.REGION + '.api.cognitive.microsoft.com'
+        self.NameID = {}
 
-class chaqer:
+        self.headers = {
+            'Content-Type': 'application/json',
+            'Ocp-Apim-Subscription-Key': self.KEY,
+        }
 
     def deleteGroup(self,groupID):
-        global CONN_CODE
-        global headers
-        global KEY
         params = urllib.urlencode({
             'personGroupId' : groupID
         })
         try:
-            conn = httplib.HTTPSConnection(CONN_CODE)
-            conn.request("DELETE", "/face/v1.0/persongroups/{personGroupId}?%s" % params, "{body}", headers)
+            conn = httplib.HTTPSConnection(self.CONN_CODE)
+            conn.request("DELETE", "/face/v1.0/persongroups/{personGroupId}?%s" % params, "{body}", self.headers)
             response = conn.getresponse()
             data = response.read()
             print(data)
@@ -42,15 +40,12 @@ class chaqer:
 
 
     def listGroups(self):
-        global CONN_CODE
-        global headers
-        global KEY
         params = urllib.urlencode({
         })
 
         try:
-            conn = httplib.HTTPSConnection(CONN_CODE)
-            conn.request("GET", "/face/v1.0/persongroups?%s" % params, "{body}", headers)
+            conn = httplib.HTTPSConnection(self.CONN_CODE)
+            conn.request("GET", "/face/v1.0/persongroups?%s" % params, "{body}", self.headers)
             response = conn.getresponse()
             data = response.read()
             data = json.loads(data)
@@ -66,10 +61,6 @@ class chaqer:
 
 
     def createPersonGroup(self,groupID,groupName="",groupInfo=""):
-        global CONN_CODE
-        global headers
-        global KEY
-        global NameID
         emptyDict = {}
         groupID = str(groupID)
         params = urllib.urlencode({
@@ -78,8 +69,8 @@ class chaqer:
 
         body = "{'name': '%s' ,'userData':'%s'}" %(groupName,groupInfo)
         try:
-            conn = httplib.HTTPSConnection(CONN_CODE)
-            conn.request("PUT", "/face/v1.0/persongroups/{personGroupId}?%s" % params, body, headers)
+            conn = httplib.HTTPSConnection(self.CONN_CODE)
+            conn.request("PUT", "/face/v1.0/persongroups/{personGroupId}?%s" % params, body, self.headers)
             response = conn.getresponse()
             data = response.read()
             if data != '':
@@ -103,11 +94,6 @@ class chaqer:
 
 
     def createPerson(self,groupID,personName,personInfo=""):
-        global NameID
-        global CONN_CODE
-        global headers
-        global KEY
-        global NameID
         groupID = str(groupID)
         params = urllib.urlencode({
             'personGroupId' : groupID
@@ -116,8 +102,8 @@ class chaqer:
         body = "{'name': '%s' ,'userData':'%s'}" %(personName,personInfo)
 
         try:
-            conn = httplib.HTTPSConnection(CONN_CODE)
-            conn.request("POST", "/face/v1.0/persongroups/{personGroupId}/persons?%s" % params, body, headers)
+            conn = httplib.HTTPSConnection(self.CONN_CODE)
+            conn.request("POST", "/face/v1.0/persongroups/{personGroupId}/persons?%s" % params, body, self.headers)
             response = conn.getresponse()
             data = response.read()
             if 'NotFound' in data:
@@ -132,12 +118,12 @@ class chaqer:
 
             if os.stat('%s'%fileName).st_size != 0:
                 with open('%s'%fileName,'r') as f:
-                    NameID = eval(f.read())
+                    self.NameID = eval(f.read())
 
-            NameID[NAME] = ID
+            self.NameID[NAME] = ID
 
             with open('%s'%fileName,'w') as f:
-                json.dump(NameID,f)
+                json.dump(self.NameID,f)
 
             conn.close()
         except Exception as e:
@@ -147,11 +133,6 @@ class chaqer:
 
 
     def addFace(self,groupID,personName,image):
-        global NameID
-        global headers
-        global CONN_CODE
-        global KEY
-        global NameID
         groupID = str(groupID)
         flag = -1
         count = 0
@@ -166,13 +147,13 @@ class chaqer:
             print '\n\nNo group by the name ' + groupID +' exists'
         try:
             with open('%s'%fileName,'r') as f:
-                NameID = eval(f.read())
+                self.NameID = eval(f.read())
         except:
             print '\n\n\nNo group with ID ' + groupID + ' exists'
             return
 
 
-        personID = NameID[NAME]
+        personID = self.NameID[NAME]
 
         params = urllib.urlencode({
             'personGroupId': groupID,
@@ -180,8 +161,8 @@ class chaqer:
         })
         body = "{'url':'%s'}" %image
         try:
-            conn = httplib.HTTPSConnection(CONN_CODE)
-            conn.request("POST", "/face/v1.0/persongroups/{personGroupId}/persons/{personId}/persistedFaces?%s" % params, body, headers)
+            conn = httplib.HTTPSConnection(self.CONN_CODE)
+            conn.request("POST", "/face/v1.0/persongroups/{personGroupId}/persons/{personId}/persistedFaces?%s" % params, body, self.headers)
             response = conn.getresponse()
             data = response.read()
             if 'NotFound' in data:
@@ -195,13 +176,13 @@ class chaqer:
             elif flag == -1:
                 localHeaders = {
                     'Content-Type': 'application/octet-stream',
-                    'Ocp-Apim-Subscription-Key': KEY,
+                    'Ocp-Apim-Subscription-Key': self.KEY,
                 }
                 try:
                     with open('%s'%image,'rb') as img:
                         body = img.read()
 
-                    conn = httplib.HTTPSConnection(CONN_CODE)
+                    conn = httplib.HTTPSConnection(self.CONN_CODE)
                     conn.request("POST", "/face/v1.0/persongroups/{personGroupId}/persons/{personId}/persistedFaces?%s" % params, body, localHeaders)
                     response = conn.getresponse()
                     data = response.read()
@@ -222,7 +203,7 @@ class chaqer:
                         filePath = str(image) + str(personFilePath[i])
                         with open ('%s'%filePath,"rb") as img:
                             body = img.read()
-                        conn = httplib.HTTPSConnection(CONN_CODE)
+                        conn = httplib.HTTPSConnection(self.CONN_CODE)
                         conn.request("POST", "/face/v1.0/persongroups/{personGroupId}/persons/{personId}/persistedFaces?%s" % params, body, localHeaders)
                         response = conn.getresponse()
                         data = response.read()
@@ -250,16 +231,13 @@ class chaqer:
 
 
     def trainGroup(self,groupID):
-        global headers
-        global CONN_CODE
-        global KEY
         params = urllib.urlencode({
             'personGroupId' : groupID
         })
         body=''
         try:
-            conn = httplib.HTTPSConnection(CONN_CODE)
-            conn.request("POST", "/face/v1.0/persongroups/{personGroupId}/train?%s" % params, body, headers)
+            conn = httplib.HTTPSConnection(self.CONN_CODE)
+            conn.request("POST", "/face/v1.0/persongroups/{personGroupId}/train?%s" % params, body, self.headers)
             response = conn.getresponse()
             data = response.read()
             if 'NotFound' in data:
@@ -274,17 +252,14 @@ class chaqer:
 
 
     def detectFaces(self,img):
-        global headers
-        global CONN_CODE
-        global KEY
         params = urllib.urlencode({
             'returnFaceId': 'true',
             'returnFaceLandmarks': 'false',
         })
         body = "{'url':'%s'}" %img
         try:
-            conn = httplib.HTTPSConnection(CONN_CODE)
-            conn.request("POST", "/face/v1.0/detect?%s" % params, body, headers)
+            conn = httplib.HTTPSConnection(self.CONN_CODE)
+            conn.request("POST", "/face/v1.0/detect?%s" % params, body, self.headers)
             response = conn.getresponse()
             data = response.read()
 
@@ -298,9 +273,9 @@ class chaqer:
                     body = img.read()
                 localHeaders = {
                     'Content-Type': 'application/octet-stream',
-                    'Ocp-Apim-Subscription-Key': KEY,
+                    'Ocp-Apim-Subscription-Key': self.KEY,
                 }
-                conn = httplib.HTTPSConnection(CONN_CODE)
+                conn = httplib.HTTPSConnection(self.CONN_CODE)
                 conn.request("POST", "/face/v1.0/detect?%s" % params, body, localHeaders)
                 response = conn.getresponse()
                 data = response.read()
@@ -323,13 +298,9 @@ class chaqer:
         jsonName = []
         result = {}
         responseFileName = '/tmp/' + 'imagesSearchedOn' + groupID.upper() + '.txt'
-        global headers
-        global CONN_CODE
-        global KEY
-        global NameID
         params = urllib.urlencode({
         })
-        faceID = chaqer().detectFaces(image)
+        faceID = Chaqer().detectFaces(image)
         if faceID == 'exit':
             print '\n\n\n Unexpected input format'
             return
@@ -346,8 +317,8 @@ class chaqer:
             faceID = str(faceID)
             body = "{'personGroupId':'%s','faceIds':%s,'maxNumOfCandidatesReturned':1,'confidenceThreshold':0.6}" %(groupID,faceID)
             try:
-                conn = httplib.HTTPSConnection(CONN_CODE)
-                conn.request("POST", "/face/v1.0/identify?%s" % params, body, headers)
+                conn = httplib.HTTPSConnection(self.CONN_CODE)
+                conn.request("POST", "/face/v1.0/identify?%s" % params, body, self.headers)
                 response = conn.getresponse()
                 data = response.read()
                 if 'BadArgument' in data:
@@ -360,17 +331,20 @@ class chaqer:
 
             fileName = '/tmp/' + groupID.lower() + '.txt'
             with open('%s'%fileName,'r') as f:
-                NameID = eval(f.read())
+                self.NameID = eval(f.read())
             for i in range(0,len(data)):
                 if len(data[i]["candidates"]) != 0:
-                    if data[i]["candidates"][0]["personId"] in NameID.values():
-                        name = NameID.keys()[NameID.values().index(data[i]["candidates"][0]["personId"])]
+                    if data[i]["candidates"][0]["personId"] in self.NameID.values():
+                        tempDict = {}
+                        name = self.NameID.keys()[self.NameID.values().index(data[i]["candidates"][0]["personId"])]
                         outStr = outStr + name + ', '
-                        jsonName.append(name)
+                        tempDict['Name'] = name
+                        tempDict['Confidence'] = data[i]["candidates"][0]["confidence"]
+                        jsonName.append(tempDict)
                     else:
-                        continue
+                        pass
                 else:
-                    continue
+                    pass
             outStr = outStr[:-2]
             if outStr == '':
                 print '\n\n\nCouldn\'t identify anyone'
@@ -392,6 +366,9 @@ class chaqer:
 
             with open('%s'%responseFileName,'w') as f:
                 json.dump(result,f)
+        print '\n\n\n'
+        print jsonName
+        print '\n\n\n'
         return
 
     def listSearchHistory(self,groupID):
@@ -399,3 +376,4 @@ class chaqer:
         with open('%s'%responseFileName,'r') as f:
             result = eval(f.read())
         print result
+        print '\n\n\n'
