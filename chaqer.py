@@ -7,8 +7,8 @@ import ast
 class Chaqer:
 
     def __init__(self):
-        self.KEY = str(os.environ.get('SUBSCRIPTION_KEY'))
-        self.REGION = str(os.environ.get('AZURE_REGION'))
+        self.KEY =str(os.environ.get('SUBSCRIPTION_KEY', ""))
+        self.REGION = str(os.environ.get('AZURE_REGION', ""))
         self.CONN_CODE = self.REGION + '.api.cognitive.microsoft.com'
         self.NameID = {}
 
@@ -16,6 +16,10 @@ class Chaqer:
             'Content-Type': 'application/json',
             'Ocp-Apim-Subscription-Key': self.KEY,
         }
+
+        if self.KEY == "" or self.REGION == "":
+            print "Must have SUBSCRIPTION_KEY and AZURE_REGION set"
+            sys.exit()
 
     def deleteGroup(self,groupID):
         params = urllib.urlencode({
@@ -280,6 +284,7 @@ class Chaqer:
                 data = response.read()
                 if 'error' not in data:
                     data = ast.literal_eval(data)
+
                     return ([d['faceId'] for d in data])
 
             return 'exit'
@@ -372,14 +377,14 @@ class Chaqer:
     def identifyFacesS3(self,groupID,image):
         result = {}
         finalResult = []
-        params = urllib.urlencode({
-        })
+        params = urllib.urlencode({})
         faceID = Chaqer().detectFaces(image)
         if len(faceID) == 0:
             return 0
         else:
             faceID = str(faceID)
             body = "{'personGroupId':'%s','faceIds':%s,'maxNumOfCandidatesReturned':1,'confidenceThreshold':0.6}" %(groupID,faceID)
+
             try:
                 conn = httplib.HTTPSConnection(self.CONN_CODE)
                 conn.request("POST", "/face/v1.0/identify?%s" % params, body, self.headers)
@@ -387,8 +392,17 @@ class Chaqer:
                 data = response.read()
                 conn.close()
                 data = ast.literal_eval(data)
+
+                if not isinstance(data, (list, tuple)) == True:
+                    if data["error"]:
+                        print data["error"]["message"]
+                        print data["error"]["code"]
+                        return 0
+
             except Exception as e:
-                print("[Errno {0}] {1}".format(e.errno, e.strerror))
+                print e
+                sys.exit()
+
             for i in range(0,len(data)):
                 if len(data[i]["candidates"]) != 0:
                     name = Chaqer().getPerson("chaqer",data[i]["candidates"][0]["personId"])
