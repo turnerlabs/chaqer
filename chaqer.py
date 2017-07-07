@@ -268,7 +268,6 @@ class Chaqer:
                 return ([d['faceId'] for d in data])
 
             elif True:
-            #    try:
                 with open(img,'rb') as img:
                     body = img.read()
                 localHeaders = {
@@ -282,8 +281,7 @@ class Chaqer:
                 if 'error' not in data:
                     data = ast.literal_eval(data)
                     return ([d['faceId'] for d in data])
-            #except:
-                        #Write code to identify people in directory
+
             return 'exit'
             conn.close()
         except Exception as e:
@@ -297,6 +295,7 @@ class Chaqer:
         outStr = ' '
         jsonName = []
         result = {}
+        imgResult = {}
         responseFileName = '/tmp/' + 'imagesSearchedOn' + groupID.upper() + '.txt'
         params = urllib.urlencode({
         })
@@ -369,6 +368,52 @@ class Chaqer:
         print jsonName
         print '\n\n\n'
         return
+
+    def identifyFacesS3(self,groupID,image):
+        result = {}
+        finalResult = []
+        params = urllib.urlencode({
+        })
+        faceID = Chaqer().detectFaces(image)
+        if len(faceID) == 0:
+            return 0
+        else:
+            faceID = str(faceID)
+            body = "{'personGroupId':'%s','faceIds':%s,'maxNumOfCandidatesReturned':1,'confidenceThreshold':0.6}" %(groupID,faceID)
+            try:
+                conn = httplib.HTTPSConnection(self.CONN_CODE)
+                conn.request("POST", "/face/v1.0/identify?%s" % params, body, self.headers)
+                response = conn.getresponse()
+                data = response.read()
+                conn.close()
+                data = ast.literal_eval(data)
+            except Exception as e:
+                print("[Errno {0}] {1}".format(e.errno, e.strerror))
+            for i in range(0,len(data)):
+                if len(data[i]["candidates"]) != 0:
+                    name = Chaqer().getPerson("chaqer",data[i]["candidates"][0]["personId"])
+                    confidence = data[i]["candidates"][0]["confidence"]
+                    result["Name"] = name
+                    result["Confidence"] = confidence
+                    finalResult.append(result)
+            return finalResult
+
+    def getPerson(self,groupID,personID):
+        params = urllib.urlencode({
+            'personGroupId': groupID,
+            'personId': personID,
+        })
+
+        try:
+            conn = httplib.HTTPSConnection(self.CONN_CODE)
+            conn.request("GET", "/face/v1.0/persongroups/{personGroupId}/persons/{personId}?%s" % params, "{body}", self.headers)
+            response = conn.getresponse()
+            data = response.read()
+            data = json.loads(data)
+            conn.close()
+            return data["name"]
+        except Exception as e:
+            print("[Errno {0}] {1}".format(e.errno, e.strerror))
 
     def listSearchHistory(self,groupID):
         responseFileName = '/tmp/' + 'imagesSearchedOn' + groupID.upper() + '.txt'
