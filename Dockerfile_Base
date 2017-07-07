@@ -1,0 +1,8 @@
+FROM python:2.7
+
+
+RUN pip install pandas
+RUN pip install datetime
+RUN pip install boto3
+RUN pip install botocore
+RUN pip install ast
