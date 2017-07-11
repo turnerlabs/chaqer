@@ -4,9 +4,11 @@ provider "aws" {
 
 # vars
 variable "name" {}
-
+variable "name2" {}
 variable "batch_job_definition" {}
+variable "batch_job_definition2" {}
 variable "batch_job_queue" {}
+variable "batch_job_queue2" {}
 variable "bucket" {}
 variable "bucket_arn" {}
 variable "video_lambda_arn" {}
@@ -41,7 +43,29 @@ exports.handler = (event, context, callback) => {
     containerOverrides: { environment: [{name: "BUCKET", value: srcBucket}, {name: "FILE", value: srcKey}] },
     parameters: event.parameters || null,
   };
+
+  const params2 = {
+    jobName: '$${name2}',
+    jobDefinition: '$${batch_job_definition2}',
+    jobQueue: '$${batch_job_queue2}',
+    containerOverrides: { environment: [{name: "BUCKET", value: srcBucket}, {name: "FILE", value: srcKey}] },
+    parameters: event.parameters || null,
+  };
+
   new AWS.Batch().submitJob(params, (err, data) => {
+    if (err) {
+      console.error(err);
+      const message = 'Error calling SubmitJob for:' + event.jobName;
+      console.error(message);
+      callback(message);
+    } else {
+      const jobId = data.jobId;
+      console.log('jobId:', jobId);
+      callback(null, jobId);
+    }
+  });
+
+  new AWS.Batch().submitJob(params2, (err, data) => {
     if (err) {
       console.error(err);
       const message = 'Error calling SubmitJob for:' + event.jobName;
@@ -58,8 +82,11 @@ EOF
 
   vars {
     name                 = "${var.name}"
+    name2                 = "${var.name2}"
     batch_job_definition = "${var.batch_job_definition}"
+    batch_job_definition2 = "${var.batch_job_definition2}"
     batch_job_queue      = "${var.batch_job_queue}"
+    batch_job_queue2     = "${var.batch_job_queue2}"
   }
 }
 

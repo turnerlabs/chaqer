@@ -1,7 +1,7 @@
 version: "2"
 services:
   chaqer:
-    image: turnerlabs/chaqer:0.1.6
+    image: turnerlabs/chaqer:0.1.8
     environment:
       REGION: "us-east-1"
       AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
