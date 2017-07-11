@@ -93,5 +93,5 @@ resultFileName = '/tmp/Azure_' + videoName + '_result.csv'
 f = open("%s"%resultFileName,"w+")
 f.close()
 df.to_csv("%s"%resultFileName)
-uploadKeyName = srcKey.rsplit("/",1)[0] + "/Azure_Results.csv"
+uploadKeyName = srcKey.rsplit("/",1)[0] + '/Azure_' + videoName + '_result.csv'
 s3.meta.client.upload_file("%s"%resultFileName,srcBucket,uploadKeyName)
